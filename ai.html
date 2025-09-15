@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi-Sahayak AI - Farming Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 90%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            color: #2d5a27;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .language-buttons {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .lang-btn {
+            background: #ddd;
+            color: #333;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            margin: 0 0.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .lang-btn.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .voice-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .mic-button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .mic-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .mic-button.listening {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .input-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            flex: 1;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .speak-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .speak-btn:hover {
+            background: #1976D2;
+        }
+        
+        .response-area {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            min-height: 150px;
+        }
+        
+        .response-content {
+            line-height: 1.6;
+        }
+        
+        .weather-widget {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .market-price {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .disease-detection {
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .disease-detection:hover {
+            background: #f8f9fa;
+            border-color: #45a049;
+        }
+        
+        .uploaded-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+        
+        .loading {
+            color: #ff9800;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌾 Krishi-Sahayak AI</h1>
+            <p id="subtitle">Your Smart Farming Assistant - Voice-Enabled Agricultural Advisor</p>
+        </div>
+        
+        <div class="demo-section">
+            <div class="language-buttons">
+                <button class="lang-btn active" id="engBtn" onclick="setLanguage('english')">English</button>
+                <button class="lang-btn" id="hinBtn" onclick="setLanguage('hindi')">हिंदी</button>
+                <button class="lang-btn" id="punBtn" onclick="setLanguage('punjabi')">ਪੰਜਾਬੀ</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 id="voiceTitle">🎤 Voice Assistant (Demo)</h3>
+            <div class="voice-section">
+                <button class="mic-button" id="micButton" onclick="startVoice()">🎤</button>
+                <p id="voiceInstructions">Click the microphone and ask your farming question</p>
+                <div id="voiceStatus" class="status"></div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 id="questionTitle">💬 Ask Your Farming Question</h3>
+            <div class="input-section">
+                <div class="input-group">
+                    <input type="text" id="questionInput" placeholder="Ask your farming question here...">
+                </div>
+                <div class="input-group">
+                    <select id="locationSelect">
+                        <option value="kharar">Kharar, Punjab</option>
+                        <option value="ludhiana">Ludhiana, Punjab</option>
+                        <option value="amritsar">Amritsar, Punjab</option>
+                        <option value="patiala">Patiala, Punjab</option>
+                    </select>
+                </div>
+                <button class="btn" id="adviceBtn" onclick="getAdvice()">Get AI Advice</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 id="diseaseTitle">📷 Crop Disease Detection</h3>
+            <div class="disease-detection" onclick="document.getElementById('imageUpload').click()">
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="analyzeImage()">
+                <p id="diseaseText">📸 Click here to upload a photo of your crop for instant disease analysis</p>
+                <img id="uploadedImage" class="uploaded-image" style="display: none;">
+            </div>
+        </div>
+        
+        <div class="response-area">
+            <h3 id="responseTitle">🤖 AI Assistant Response:</h3>
+            <div id="responseContent" class="response-content">
+                <p id="defaultMessage" style="color: #666; font-style: italic;">Ask me anything about farming, and I'll provide expert advice!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLanguage = 'english';
+        let isListening = false;
+        let recognition;
+
+        // Farm responses for all languages
+        const farmResponses = {
+            english: {
+                wheat: "Yellow wheat leaves indicate nitrogen deficiency. Apply 10kg urea per acre. Weather is favorable for application.",
+                tomato: "Yellow tomato leaves suggest nutrient deficiency or overwatering. Ensure proper drainage and balanced fertilization.",
+                weather: "Today's weather: Partly cloudy, 28°C, humidity 65%. Good conditions for field operations.",
+                price: "Current wheat prices: Kharar Mandi - ₹2,150/quintal, Ludhiana Mandi - ₹2,180/quintal."
+            },
+            hindi: {
+                wheat: "गेहूं की पत्तियों का पीला होना नाइट्रोजन की कमी दिखाता है। 10 किलो यूरिया प्रति एकड़ डालें। मौसम अनुकूल है।",
+                tomato: "टमाटर की पत्तियों का पीला होना पोषक तत्वों की कमी या अधिक पानी का संकेत है।",
+                weather: "आज का मौसम: आंशिक बादल, 28°C, नमी 65%। खेती के काम के लिए अच्छी परिस्थितियां।",
+                price: "गेहूं की कीमतें: खरड़ मंडी - ₹2,150/क्विंटल, लुधियाना मंडी - ₹2,180/क्विंटल।"
+            },
+            punjabi: {
+                wheat: "ਕਣਕ ਦੇ ਪੱਤੇ ਪੀਲੇ ਹੋਣਾ ਨਾਈਟਰੋਜਨ ਦੀ ਕਮੀ ਦਰਸਾਉਂਦਾ ਹੈ। 10 ਕਿੱਲੋ ਯੂਰੀਆ ਪ੍ਰਤੀ ਏਕੜ ਪਾਓ। ਮੌਸਮ ਅਨੁਕੂਲ ਹੈ।",
+                tomato: "ਟਮਾਟਰ ਦੇ ਪੱਤਿਆਂ ਦਾ ਪੀਲਾ ਹੋਣਾ ਪੌਸ਼ਟਿਕ ਤੱਤਾਂ ਦੀ ਕਮੀ ਜਾਂ ਜ਼ਿਆਦਾ ਪਾਣੀ ਦਾ ਸੰਕੇਤ ਹੈ।",
+                weather: "ਅੱਜ ਦਾ ਮੌਸਮ: ਅੰਸ਼ਕ ਬੱਦਲ, 28°C, ਨਮੀ 65%। ਖੇਤੀ ਦੇ ਕੰਮ ਲਈ ਚੰਗੀਆਂ ਸਥਿਤੀਆਂ।",
+                price: "ਕਣਕ ਦੀਆਂ ਕੀਮਤਾਂ: ਖਰੜ ਮੰਡੀ - ₹2,150/ਕੁਇੰਟਲ, ਲੁਧਿਆਣਾ ਮੰਡੀ - ₹2,180/ਕੁਇੰਟਲ।"
+            }
+        };
+
+        // UI translations
+        const uiTexts = {
+            english: {
+                subtitle: "Your Smart Farming Assistant - Voice-Enabled Agricultural Advisor",
+                voiceTitle: "🎤 Voice Assistant (Demo)",
+                voiceInstructions: "Click the microphone and ask your farming question",
+                questionTitle: "💬 Ask Your Farming Question",
+                questionPlaceholder: "Ask your farming question here...",
+                adviceBtn: "Get AI Advice",
+                diseaseTitle: "📷 Crop Disease Detection",
+                diseaseText: "📸 Click here to upload a photo of your crop for instant disease analysis",
+                responseTitle: "🤖 AI Assistant Response:",
+                defaultMessage: "Ask me anything about farming, and I'll provide expert advice!",
+                analyzing: "🤖 AI is analyzing your question...",
+                speakBtn: "🔊 Speak Answer"
+            },
+            hindi: {
+                subtitle: "आपका स्मार्ट कृषि सहायक - आवाज-सक्षम कृषि सलाहकार",
+                voiceTitle: "🎤 आवाज सहायक (डेमो)",
+                voiceInstructions: "माइक्रोफोन दबाएं और अपना कृषि प्रश्न पूछें",
+                questionTitle: "💬 अपना कृषि प्रश्न पूछें",
+                questionPlaceholder: "यहां अपना कृषि प्रश्न पूछें...",
+                adviceBtn: "AI सलाह लें",
+                diseaseTitle: "📷 फसल रोग जांच",
+                diseaseText: "📸 तुरंत रोग विश्लेषण के लिए अपनी फसल की तस्वीर अपलोड करें",
+                responseTitle: "🤖 AI सहायक की प्रतिक्रिया:",
+                defaultMessage: "खेती के बारे में कुछ भी पूछें, और मैं विशेषज्ञ सलाह प्रदान करूंगा!",
+                analyzing: "🤖 AI आपके प्रश्न का विश्लेषण कर रहा है...",
+                speakBtn: "🔊 बोलें"
+            },
+            punjabi: {
+                subtitle: "ਤੁਹਾਡਾ ਸਮਾਰਟ ਖੇਤੀਬਾੜੀ ਸਹਾਇਕ - ਆਵਾਜ਼-ਸਮਰਥ ਖੇਤੀਬਾੜੀ ਸਲਾਹਕਾਰ",
+                voiceTitle: "🎤 ਆਵਾਜ਼ ਸਹਾਇਕ (ਡੈਮੋ)",
+                voiceInstructions: "ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਦਬਾਓ ਅਤੇ ਆਪਣਾ ਖੇਤੀਬਾੜੀ ਸਵਾਲ ਪੁੱਛੋ",
+                questionTitle: "💬 ਆਪਣਾ ਖੇਤੀਬਾੜੀ ਸਵਾਲ ਪੁੱਛੋ",
+                questionPlaceholder: "ਇੱਥੇ ਆਪਣਾ ਖੇਤੀਬਾੜੀ ਸਵਾਲ ਪੁੱਛੋ...",
+                adviceBtn: "AI ਸਲਾਹ ਲਓ",
+                diseaseTitle: "📷 ਫਸਲ ਬਿਮਾਰੀ ਜਾਂਚ",
+                diseaseText: "📸 ਤੁਰੰਤ ਬਿਮਾਰੀ ਵਿਸ਼ਲੇਸ਼ਣ ਲਈ ਆਪਣੀ ਫਸਲ ਦੀ ਤਸਵੀਰ ਅੱਪਲੋਡ ਕਰੋ",
+                responseTitle: "🤖 AI ਸਹਾਇਕ ਦਾ ਜਵਾਬ:",
+                defaultMessage: "ਖੇਤੀਬਾੜੀ ਬਾਰੇ ਕੁਝ ਵੀ ਪੁੱਛੋ, ਅਤੇ ਮੈਂ ਮਾਹਰ ਸਲਾਹ ਦੂੰਗਾ!",
+                analyzing: "🤖 AI ਤੁਹਾਡੇ ਸਵਾਲ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰ ਰਿਹਾ ਹੈ...",
+                speakBtn: "🔊 ਜਵਾਬ ਬੋਲੋ"
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            updateUI();
+            
+            // Update button styles
+            document.getElementById('engBtn').className = 'lang-btn' + (lang === 'english' ? ' active' : '');
+            document.getElementById('hinBtn').className = 'lang-btn' + (lang === 'hindi' ? ' active' : '');
+            document.getElementById('punBtn').className = 'lang-btn' + (lang === 'punjabi' ? ' active' : '');
+        }
+
+        function updateUI() {
+            const ui = uiTexts[currentLanguage];
+            document.getElementById('subtitle').textContent = ui.subtitle;
+            document.getElementById('voiceTitle').textContent = ui.voiceTitle;
+            document.getElementById('voiceInstructions').textContent = ui.voiceInstructions;
+            document.getElementById('questionTitle').textContent = ui.questionTitle;
+            document.getElementById('questionInput').placeholder = ui.questionPlaceholder;
+            document.getElementById('adviceBtn').textContent = ui.adviceBtn;
+            document.getElementById('diseaseTitle').textContent = ui.diseaseTitle;
+            document.getElementById('diseaseText').textContent = ui.diseaseText;
+            document.getElementById('responseTitle').textContent = ui.responseTitle;
+            document.getElementById('defaultMessage').textContent = ui.defaultMessage;
+        }
+
+        function startVoice() {
+            if (isListening) {
+                if (recognition) recognition.stop();
+                return;
+            }
+            
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    alert('Voice recognition not supported. Please type your question.');
+                    return;
+                }
+                
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = currentLanguage === 'hindi' ? 'hi-IN' : currentLanguage === 'punjabi' ? 'pa-IN' : 'en-IN';
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    document.getElementById('micButton').classList.add('listening');
+                    document.getElementById('voiceStatus').innerHTML = '🎤 Listening... Speak now!';
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('questionInput').value = transcript;
+                    document.getElementById('voiceStatus').innerHTML = '✅ Heard: "' + transcript + '"';
+                    setTimeout(() => getAdvice(), 1000);
+                };
+                
+                recognition.onerror = function() {
+                    isListening = false;
+                    document.getElementById('micButton').classList.remove('listening');
+                    document.getElementById('voiceStatus').innerHTML = '❌ Voice error. Please try typing.';
+                };
+                
+                recognition.onend = function() {
+                    isListening = false;
+                    document.getElementById('micButton').classList.remove('listening');
+                };
+                
+                recognition.start();
+                
+            } catch (error) {
+                alert('Voice recognition not available.');
+            }
+        }
+
+        function getAdvice() {
+            const question = document.getElementById('questionInput').value.toLowerCase();
+            const location = document.getElementById('locationSelect').value;
+            
+            if (!question.trim()) {
+                alert('Please ask a question!');
+                return;
+            }
+            
+            // Show loading
+            const ui = uiTexts[currentLanguage];
+            document.getElementById('responseContent').innerHTML = '<p style="color: #ff9800;">' + ui.analyzing + '</p>';
+            
+            setTimeout(() => {
+                const response = generateResponse(question, location);
+                document.getElementById('responseContent').innerHTML = response;
+            }, 2000);
+        }
+
+        function generateResponse(question, location) {
+            const responses = farmResponses[currentLanguage];
+            let advice = '';
+            
+            // Simple logic for all languages
+            if (question.includes('yellow') || question.includes('पीली') || question.includes('ਪੀਲੇ') || 
+                question.includes('wheat') || question.includes('गेहूं') || question.includes('ਕਣਕ')) {
+                advice = responses.wheat;
+            } else if (question.includes('tomato') || question.includes('टमाटर') || question.includes('ਟਮਾਟਰ')) {
+                advice = responses.tomato;
+            } else if (question.includes('weather') || question.includes('मौसम') || question.includes('ਮੌਸਮ')) {
+                advice = responses.weather;
+            } else if (question.includes('price') || question.includes('कीमत') || question.includes('ਭਾਅ')) {
+                advice = responses.price;
+            } else {
+                advice = responses.wheat; // Default
+            }
+            
+            const locationName = location.charAt(0).toUpperCase() + location.slice(1);
+            let analysisText = currentLanguage === 'punjabi' ? `${locationName}, ਪੰਜਾਬ ਲਈ AI ਵਿਸ਼ਲੇਸ਼ਣ` :
+                                 currentLanguage === 'hindi' ? `${locationName}, पंजाब के लिए AI विश्लेषण` :
+                                 `AI Analysis for ${locationName}, Punjab`;
+            
+            let weatherText = currentLanguage === 'punjabi' ? 'ਮੌਜੂਦਾ ਮੌਸਮ' :
+                                currentLanguage === 'hindi' ? 'वर्तमान मौसम' : 'Current Weather';
+            
+            let recommendationText = currentLanguage === 'punjabi' ? 'ਸਿਫਾਰਸ਼' :
+                                       currentLanguage === 'hindi' ? 'सिफारिश' : 'Recommendation';
+            
+            let response = `<h4>🎯 ${analysisText}:</h4>`;
+            
+            // Weather widget
+            response += `
+                <div class="weather-widget">
+                    <div>
+                        <h4>🌤️ ${weatherText}</h4>
+                        <p>28°C, ${currentLanguage === 'punjabi' ? 'ਅੰਸ਼ਿਕ ਬੱਦਲ' : 
+                                    currentLanguage === 'hindi' ? 'आंशिक बादल' : 'Partly Cloudy'}, 
+                                    ${currentLanguage === 'punjabi' ? 'ਨਮੀ' : 
+                                      currentLanguage === 'hindi' ? 'नमी' : 'Humidity'}: 65%</p>
+                    </div>
+                    <div style="font-size: 2rem;">☁️</div>
+                </div>
+            `;
+            
+            // Main advice
+            response += `<div style="background: #e8f5e8; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
+                <h4>💡 ${recommendationText}:</h4>
+                <p>${advice}</p>`;
+                
+            const speakBtnText = uiTexts[currentLanguage].speakBtn;
+            response += `<button class="speak-btn" onclick="speakText('${advice.replace(/'/g, "\\'")}', '${currentLanguage}')">
+                ${speakBtnText}
+            </button>`;
+            
+            response += `</div>`;
+            
+            return response;
+        }
+
+        function speakText(text, language) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.rate = 0.8;
+                msg.pitch = 1;
+                msg.volume = 0.9;
+                
+                if (language === 'hindi') {
+                    msg.lang = 'hi-IN';
+                } else if (language === 'punjabi') {
+                    msg.lang = 'pa-IN';
+                } else {
+                    msg.lang = 'en-US';
+                }
+                
+                window.speechSynthesis.speak(msg);
+                
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = language === 'hindi' ? '🔊 बोल रहा है...' : language === 'punjabi' ? '🔊 ਬੋਲ ਰਿਹਾ ਹੈ...' : '🔊 Speaking...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 3000);
+                
+            } else {
+                alert('Speech not supported in this browser.');
+            }
+        }
+
+        function analyzeImage() {
+            const file = document.getElementById('imageUpload').files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById('uploadedImage');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                
+                const ui = uiTexts[currentLanguage];
+                document.getElementById('responseContent').innerHTML = '<p style="color: #ff9800;">🤖 Analyzing image...</p>';
+                
+                setTimeout(() => {
+                    let diseaseText = currentLanguage === 'punjabi' ? 'ਅਰਲੀ ਬਲਾਈਟ ਦੀ ਪਹਿਚਾਣ ਹੋਈ ਹੈ। ਪ੍ਰਭਾਵਿਤ ਪੱਤੇ ਹਟਾਓ ਅਤੇ ਤਾਂਬੇ-ਆਧਾਰਿਤ ਫੰਗੀਸਾਈਡ ਦਾ ਛਿੜਕਾਅ ਕਰੋ।' :
+                                          currentLanguage === 'hindi' ? 'अर्ली ब्लाइट की पहचान हुई है। प्रभावित पत्तियों को हटाएं और कॉपर-आधारित फंगीसाइड का छिड़काव करें।' :
+                                          'Early Blight detected. Remove affected leaves and spray with copper-based fungicide.';
+                    
+                    document.getElementById('responseContent').innerHTML = `
+                        <h4>📷 ${currentLanguage === 'punjabi' ? 'AI ਦ੍ਰਿਸ਼ਟੀ ਵਿਸ਼ਲੇਸ਼ਣ' : 
+                                     currentLanguage === 'hindi' ? 'AI दृष्टि विश्लेषण' : 'AI Vision Analysis'}:</h4>
+                        <div style="background: #fff; border: 2px solid #4CAF50; border-radius: 15px; padding: 1.5rem;">
+                            <h3 style="color: #d32f2f;">🦠 ${currentLanguage === 'punjabi' ? 'ਪਹਿਚਾਣ' : 
+                                                            currentLanguage === 'hindi' ? 'पहचान' : 'Detected'}: Early Blight</h3>
+                            <p><strong>${currentLanguage === 'punjabi' ? 'ਵਿਸ਼ਵਾਸ ਪੱਧਰ' : 
+                                          currentLanguage === 'hindi' ? 'विश्वास स्तर' : 'Confidence'}:</strong> 87%</p>
+                            <p><strong>${currentLanguage === 'punjabi' ? 'ਉਪਚਾਰ' : 
+                                          currentLanguage === 'hindi' ? 'उपचार' : 'Treatment'}:</strong></p>
+                            <p>${diseaseText}</p>
+                        </div>
+                    `;
+                }, 3000);
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>
